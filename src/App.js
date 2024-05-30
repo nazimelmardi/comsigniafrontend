@@ -25,12 +25,12 @@ function App() {
 
   const handleUpdateVehicle = async (id, longitude, latitude) => {
     try {
-      const response = await fetch(`http://localhost:8080/vehicles/update}`, {
+      const response = await fetch(`http://localhost:8080/vehicles/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({id, longitude, latitude }),
+        body: JSON.stringify({ id, longitude, latitude }),
       });
       if (!response.ok) {
         throw new Error('Failed to update vehicle');
