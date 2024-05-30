@@ -7,7 +7,7 @@ function App() {
 
   const fetchDataFromBackend = async () => {
     try {
-      const response = await fetch('/api/vehicles/refresh'); // Adjust the URL as needed
+      const response = await fetch('localhost:8080/vehicles/refresh'); // Adjust the URL as needed
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }

@@ -30,7 +30,7 @@ test('fetchDataFromBackend fetches and sets vehicles', async () => {
 
   // Verify fetch is called with the correct URL
   await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('/api/vehicles/refresh');
+    expect(fetch).toHaveBeenCalledWith('localhost:8080/vehicles/refresh');
   });
 
   // Wait for the data to be fetched and state updated
@@ -52,7 +52,7 @@ test('handleUpdateVehicle updates vehicle', async () => {
 
   // Wait for initial data fetch
   await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('/api/vehicles/refresh');
+    expect(fetch).toHaveBeenCalledWith('localhost:8080/vehicles/refresh');
   });
 
   fetch.mockResolvedValueOnce({ ok: true });
@@ -81,7 +81,7 @@ test('handleUpdateMessage updates vehicle message', async () => {
 
   // Wait for initial data fetch
   await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('/api/vehicles/refresh');
+    expect(fetch).toHaveBeenCalledWith('localhost:8080/vehicles/refresh');
   });
 
   fetch.mockResolvedValueOnce({ ok: true });
