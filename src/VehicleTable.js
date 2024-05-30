@@ -1,9 +1,10 @@
 import React from 'react';
+import './index.css';
 
 const VehicleTable = ({ vehicles, onUpdateVehicle, onUpdateMessage, onRegisterVehicle }) => {
   return (
     <div>
-      <table>
+      <table className="vehicle-table">
         <thead>
         <tr>
           <th>ID</th>
