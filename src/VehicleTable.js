@@ -1,7 +1,7 @@
 import React from 'react';
 import './index.css';
 
-const VehicleTable = ({ vehicles, onUpdateVehicle, onUpdateMessage, onRegisterVehicle }) => {
+const VehicleTable = ({ vehicles }) => {
   return (
     <div>
       <table className="vehicle-table">
@@ -19,27 +19,7 @@ const VehicleTable = ({ vehicles, onUpdateVehicle, onUpdateMessage, onRegisterVe
             <td>{vehicle.id}</td>
             <td>{vehicle.longitude}</td>
             <td>{vehicle.latitude}</td>
-            <td>
-              <input
-                type="text"
-                value={vehicle.message}
-                onChange={(e) => onUpdateMessage(vehicle.id, e.target.value)}
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                value={vehicle.longitude}
-                onChange={(e) => onUpdateVehicle(vehicle.id, e.target.value)}
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                value={vehicle.latitude}
-                onChange={(e) => onUpdateVehicle(vehicle.id, e.target.value)}
-              />
-            </td>
+            <td>{vehicle.message}</td>
           </tr>
         ))}
         </tbody>

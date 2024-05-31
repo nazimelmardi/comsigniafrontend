@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from './App';
 import VehicleTable from './VehicleTable';
@@ -20,7 +20,9 @@ beforeEach(() => {
 // Mock VehicleTable component to avoid rendering its children
 jest.mock('./VehicleTable', () => jest.fn(() => <div>Mocked VehicleTable</div>));
 
-test('fetchDataFromBackend fetches and sets vehicles', async () => {
+test('fetchDataFromBackend fetches and sets vehicles on mount and every 10 seconds', async () => {
+  jest.useFakeTimers();
+
   fetch.mockResolvedValueOnce({
     ok: true,
     json: async () => mockVehicles,
@@ -28,9 +30,9 @@ test('fetchDataFromBackend fetches and sets vehicles', async () => {
 
   render(<App />);
 
-  // Verify fetch is called with the correct URL
+  // Verify fetch is called with the correct URL on mount
   await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('localhost:8080/vehicles/refresh');
+    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/vehicles/refresh');
   });
 
   // Wait for the data to be fetched and state updated
@@ -40,64 +42,23 @@ test('fetchDataFromBackend fetches and sets vehicles', async () => {
       expect.anything()
     );
   });
-});
 
-test('handleUpdateVehicle updates vehicle', async () => {
+  // Mock fetch again for the interval call
   fetch.mockResolvedValueOnce({
     ok: true,
     json: async () => mockVehicles,
   });
 
-  render(<App />);
+  // Fast forward 10 seconds
+  jest.advanceTimersByTime(10000);
 
-  // Wait for initial data fetch
+  // Verify fetch is called again after 10 seconds
   await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('localhost:8080/vehicles/refresh');
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/vehicles/refresh');
   });
 
-  fetch.mockResolvedValueOnce({ ok: true });
-
-  // Call handleUpdateVehicle directly
-  const { onUpdateVehicle } = VehicleTable.mock.calls[0][0];
-  await onUpdateVehicle('1', '678.90', '98.765');
-
-  // Verify the fetch call to update vehicle
-  expect(fetch).toHaveBeenCalledWith('http://localhost:8080/vehicles/update', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id: '1', longitude: '678.90', latitude: '98.765' }),
-  });
-});
-
-test('handleUpdateMessage updates vehicle message', async () => {
-  fetch.mockResolvedValueOnce({
-    ok: true,
-    json: async () => mockVehicles,
-  });
-
-  render(<App />);
-
-  // Wait for initial data fetch
-  await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('localhost:8080/vehicles/refresh');
-  });
-
-  fetch.mockResolvedValueOnce({ ok: true });
-
-  // Call handleUpdateMessage directly
-  const { onUpdateMessage } = VehicleTable.mock.calls[0][0];
-  await onUpdateMessage('1', 'New Test Message');
-
-  // Verify the fetch call to update message
-  expect(fetch).toHaveBeenCalledWith('http://localhost:8080/notifications/ui', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id: '1', message: 'New Test Message' }),
-  });
+  jest.useRealTimers();
 });
 
 test('handles fetch error in fetchDataFromBackend', async () => {
@@ -116,4 +77,3 @@ test('handles fetch error in fetchDataFromBackend', async () => {
   // Restore console.error
   consoleErrorMock.mockRestore();
 });
-
